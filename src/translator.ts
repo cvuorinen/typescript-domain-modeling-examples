@@ -6,13 +6,13 @@ type TranslationKey = string;
 type Language = "en" | "fi" | "se";
 type TranslationList = { [id: string]: Translation };
 type Translations = [Language, TranslationList];
-type TranslationStream = Observable<Translation>;
+type TranslationStream = Observable<Translation | TranslationKey>;
 
 interface ITranslator {
     addTranslations: (Translations) => void;
     selectLanguage: (Language) => void;
-    translate: (key: string) => Translation;
-    translateAsync: (key: string) => TranslationStream;
+    translate: (TranslationKey) => Translation | TranslationKey;
+    translateAsync: (TranslationKey) => TranslationStream;
 }
 
 // ------------------
@@ -31,7 +31,7 @@ class Translator implements ITranslator {
         this.lang$.onNext(lang);
     }
 
-    public translate(key: string): Translation {
+    public translate(key: TranslationKey): Translation | TranslationKey {
         const translations = _.find(this.translations, (translations) => translations[0] === this.lang);
         const translationList = translations[1];
 
@@ -42,7 +42,7 @@ class Translator implements ITranslator {
         return translationList[key];
     }
 
-    public translateAsync(key: string): TranslationStream {
+    public translateAsync(key: TranslationKey): TranslationStream {
         return this.lang$.asObservable()
             .merge(Observable.of(this.lang))
             .map(lang => this.translate(key));
