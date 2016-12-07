@@ -6,17 +6,11 @@ var tsProject = tsc.createProject('tsconfig.json');
 
 var config = {
     src: 'src/**/*.ts',
-    typings: './typings/**/*.ts',
     dest: 'src/'
 };
 
 gulp.task('compile-ts', function () {
-    var sourceTsFiles = [
-        config.src/*,
-        config.typings*/
-    ];
-
-    var tsResult = gulp.src(sourceTsFiles)
+    var tsResult = gulp.src(config.src)
         //.pipe(sourcemaps.init())
         .pipe(tsProject());
 
